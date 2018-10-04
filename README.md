@@ -90,7 +90,6 @@ By the end of this 2-day bootcamp, you will learn the following K8S concepts:
     - [Skaffold](./app-dev/README.md) - Similar to Draft but takes different approach.  Skaffold also supports multi-component apps which is very nice.
     - [Minikube](https://github.com/kubernetes/minikube) - Local single node K8S cluster for development and learning.
     - [Conduit](https://conduit.io/) - A lighweight microservices service mesh that can be deployed to K8S.  Provides intelligent load-balancing, telemetry and more!
-    - [kubespray](https://github.com/kubernetes-incubator/kubespray) - Deploying K8S using ansible. Can be used to deploy on bare metal, on-premises VMs, various cloud providers.
 
 ### Interesting Links ###
 
