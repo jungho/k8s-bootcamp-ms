@@ -1,16 +1,24 @@
 # deploy the pod using 'kubectl create -f simple-pod.yml'
-# get pod details using 'kubectl describe pod/nginx-example'
-# connect to the pod using 'kubectl port-forward nginx-example 8080:80' and open a browser to http://127.0.0.1:8080
+# get pod details using 'kubectl describe pod/simple-pod'
+# connect to the pod using 'kubectl port-forward simple-pod 8080:80' and in another shell run 'curl localhost:8080'
+# get shell access to the alpine-curl 'kubectl exec -ti simple-pod -c alpine-curl -- sh'
+# from the shell run 'curl localhost'
 # delete the pod using 'kubectl delete -f simple-pod.yml'
 
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx-example
+  name: simple-pod
   labels:
-    day1: nginx-pod
+    day1: simple-pod
 spec:
   containers:
-  - name: my-nginx
+  - name: nginx
     image: nginx
     imagePullPolicy: IfNotPresent
+  - name: alpine-curl
+    image: byrnedo/alpine-curl
+    command: [ "/bin/sh", "-c", "--" ]
+    args: [ "while true; do sleep 30; done;" ]
+    #Always is the default
+    imagePullPolicy: Always
