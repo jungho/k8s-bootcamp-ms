@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-ui
+  namespace: {{ required "Namespace is required" .Values.deployment.namespace }}
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind: Mapping
+      name: {{ printf "%s-%s" "todo-app" .Values.deployment.namespace }}
+      prefix: /
+      {{- if eq .Values.deployment.enableHeader true }}
+      headers: 
+        x-namespace: {{ .Values.deployment.namespace }}
+      {{- end }}
+      service: {{ printf "%s.%s" "todo-ui" .Values.deployment.namespace }}
+      {{- if eq .Values.deployment.enableWeight true }}
+      weight: {{ required "'Weigth' value is required as the hostEnable flag is set" .Values.deployment.weight }}
+      {{- end }}
+      {{- if eq .Values.deployment.enableHost true}}
+      host: {{required " 'Host' is required as the hostEnable flag is set" .Values.deployment.host }}
+      {{- end }}
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: todo-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-ui
+  namespace: {{ required "Namespace is required" .Values.deployment.namespace }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-ui
+  template:
+    metadata:
+      labels:
+        app: todo-ui
+    spec:
+      containers:
+      - name: todo-ui
+        image: {{ .Values.ui.image }}:{{ .Values.ui.version }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: REACT_APP_TEST_MODE
+          valueFrom:
+            configMapKeyRef:
+              name: todo-ui-config
+              key: is_test_mode
+        - name: REACT_APP_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: todoapp-secrets
+              key: azure_app_id
+        - name: REACT_APP_TENANT
+          valueFrom:
+            secretKeyRef:
+              name: todoapp-secrets
+              key: ad_tenant
+      #imagePullSecrets:
+      # - name: techdemosecret

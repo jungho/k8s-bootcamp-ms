@@ -1,0 +1,18 @@
+# This is a mandatory field. This should be provided at runtime.
+deployment:
+  namespace: 
+  enableWeight: false
+  weight:
+  enableHost: false
+  host:
+  enableHeader: false
+
+ui:
+  image: architechbootcamp/todo-api
+  version: 1.0.1
+
+secrets:
+  ad_identity_meta_data: https://login.microsoftonline.com/architech.onmicrosoft.com/v2.0/.well-known/openid-configuration
+  ad_tenant: architech.ca
+  azure_app_id: 071bbd28-ad9e-4a10-ac10-d5c92a67ca0b
+  azure_client_secret: elvnF4A0o+yMKxXNeRvMv9dW6lI+jZdgCHSr32ZFOE0=

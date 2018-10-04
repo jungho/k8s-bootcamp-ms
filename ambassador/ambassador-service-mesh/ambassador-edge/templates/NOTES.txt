@@ -1,0 +1,24 @@
+Ambassador is an open source, Kubernetes-native microservices API gateway built on the Envoy Proxy. Ambassador is built from the ground up to support multiple, independent teams that need to rapidly publish, monitor, and update services for end users.
+Ambassador can also be used to handle the functions of a Kubernetes ingress controller and load balancer
+
+# Get the services within stack.
+kubectl get svc -n kube-system
+
+# The Diagnostics Service in Kubernetes
+
+Ambassador includes an integrated diagnostics service to help with troubleshooting. By default, this is not exposed to the Internet.
+
+kubectl port-forward <pod-name> 8877
+
+The dashboard can be accessed via, http://localhost:8877/ambassador/v0/diag/.
+
+Maintainers:
+  - name: Jungho Kim
+    email: jk@architech
+  - name: Robin Jerome
+    email: rjerome@architech.ca
+  - name: Jeevan Varughese 
+    email: jvarughese@architech.ca
+ 
+
+©2018 Architech Solutions Consulting Services Inc

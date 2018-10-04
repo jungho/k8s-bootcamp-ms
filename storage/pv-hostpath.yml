@@ -1,0 +1,23 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-hostpath
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  #when the PVC is released, retain the data.
+  #valid values are Retain (default), Recycle and Delete.
+  #Not all volume plugins support Recycle. See the volume plugin for details.
+  persistentVolumeReclaimPolicy: Recycle 
+  #On Azure, every Linux VM has a temporary disk mounted to /mnt
+  #By using the hostPath volume, we are creating a PV that is mounted to the 
+  #/mnt directory on the host.  Only use hostPath if you need to access well-known
+  #paths on the host.
+  hostPath:
+    path: /mnt
+  #required on minikube
+  #storageClassName: standard
+
+    
