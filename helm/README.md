@@ -13,7 +13,7 @@ From within the helm directory run the following commands:
 kubectl create -f default-rolebinding.yaml
 
 #1) ensure the helm client version and the tiller version on the server are compatible.
-helm init --upgrade
+helm init --upgrade --service-account tiller
 
 #2) Create a namespace to deploy your app. Replace <namespace> with whatever namespace you choose. 
 kubectl create namespace <namespace>
