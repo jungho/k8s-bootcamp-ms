@@ -1,5 +1,11 @@
 # Deploying istio #
 
+Add incubator repository to list of Helm repos.
+
+```sh
+ helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com
+```
+
 From within the helm directory run the following command which will download the latest version of the istio chart archive.
 
 ```sh
@@ -19,7 +25,7 @@ Note, you may need to update the istio.release value in the istio/value.yml file
 Helm will deploy the chart to K8S then state the release was deployed but that CustomResourceDefinitions were required to be installed prior to installing the services.  CustomResourceDefinitions have been deployed, you need upgrade the service to run the services.  Run the following command, replacing <release_name> with the name istio provides.
 
 ```sh
-helm upgrade <release_name> incubator/istio --reuse-values --set istio.install=true
+helm upgrade <release_name> istio --reuse-values --set istio.install=true
 ```
 
 This will take a few minutes, run ```kubectl get deployments``` to see how the deployment is progressing.
