@@ -71,7 +71,7 @@ environments is live, with the live environment serving all production traffic.
 ##### Ambassador Edge Proxy
 1. Run the command `helm install --name ambassador-edge ./ambassador-edge`. Adjust the path appropriately for `ambassador-edge` folder.
 2. Run command `kubectl get svc ` and wait for the edge proxy for the acquire ip.
-3. On another terminal run command `kubectl logs <ambassador pods`, to see the envoy configuration.
+3. On another terminal run command `kubectl logs <ambassador pods>`, to see the envoy configuration.
 
 ##### Blue Green Deployment
 1. Run the `bluegreen.sh`. It run the helm chart with the right set of attribute for blue green deployment.This will created
@@ -86,4 +86,4 @@ environments is live, with the live environment serving all production traffic.
 1. Run the `campaign.sh`. It run the helm chart with the right set of attribute for A/B deployment.This will created
    two namespaces , namely campaign-blue and campaign-green.
 2. Ensure that the pods are running on the respective namespaces and all the services have received their IP.
-3. Add `blue.architech.ca` and `green.architech.ca` to `/etc/host`. This will ensure that the `host` field in the http header is populated. The edge proxy will route the request to the right application based on the host that is provided.
+3. Add `blue.architech.ca` and `green.architech.ca` to `/etc/hosts`. This will ensure that the `host` field in the http header is populated. The edge proxy will route the request to the right application based on the host that is provided.
