@@ -1,3 +1,7 @@
+#here we create a serviceaccount specifically for the Tiller pod, we
+#then bind the tiller serviceaccount to the cluster-admin role, giving
+#tiller the necessary access to the api-server.  Note, the access
+#in this case is still too broad, but for our purposes, it is sufficient.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
