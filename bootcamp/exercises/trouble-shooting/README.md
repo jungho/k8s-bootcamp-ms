@@ -32,11 +32,6 @@ kubectl exec -ti <pod-name> -- bash
 Deploy the todo-app helm chart in [todo-app](./todo-app).  There is a small issue with this chart.  It will deploy but the application will fail to run.  Try to find out what the issue is and correct it.
 
 ```sh
-#On AKS, the necessary rolebinding for helm to be able to deploy resources to the necessary namespaces. This is required 
-#to give the default service account in each namespace permissions to access the necessary resources. 
-#This is not required on Minikube.
-kubectl create -f default-rolebinding.yaml
-
 #first create a namespace to work in
 kubectl create namespace troubleshooting
 
