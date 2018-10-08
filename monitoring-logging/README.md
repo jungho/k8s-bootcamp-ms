@@ -58,6 +58,12 @@ kubectl port-forward $(kubectl get  pods --selector=app=kube-prometheus-grafana 
 
 ```
 
+Optionally deploy LoadBalancer service to access Grafan dashboard
+
+```sh
+kubectl create -f dashboard-service.yaml
+``` 
+
 ### Elasticsearch + Kibana Operator
 
 This is simple deployment of Elasticsearch and Kibana to K8S.  You still have to deploy either fluentd or Logstash or FileBeats onto the nodes to extract the log files and forward to Elasticsearch.  Note, as Elasticsearch is quite resource intensive, it is highly recommended that you have dedicated nodes for ES.  You can do this by applying taints and tolerations to ensure only ES pods get scheduled to these nodes.  Filebeats or Fluentd then needs to be deployed as daemonsets onto the nodes from which you want to pull the log files.
@@ -69,3 +75,4 @@ This is simple deployment of Elasticsearch and Kibana to K8S.  You still have to
 - [kube-prometheus - Provides manifests and leverages Prometheus Operator to provide monitoring of the K8S cluster and applications](https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheus)
 - [Awesome Kubernetes Extensions](https://github.com/coreos/awesome-kubernetes-extensions)
 - [ELK on Azure Container Service](https://github.com/Microsoft/elk-acs-kubernetes)
+- [CoreOS Operator SDK](https://coreos.com/blog/introducing-operator-framework)
