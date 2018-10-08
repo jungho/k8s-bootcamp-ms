@@ -29,12 +29,7 @@ We will be using the helm chart published by CoreOS to deploy the operator.  Cor
 
 **You must have RBAC enabled on your cluster to deploy these Operators.  I will be using Minikube with RBAC enabled.**
 
-If you are deploying to AKS version 1.9 or greater, you must create the necessary rolebinding to enable the serviceaccount kube-system:default to create resources within the monitoring namespace.  This not required for Minikube.
-
-```sh
-kubectl create -f default-rolebinding.yaml
-```
-
+We will be using helm to deploy the operator, make sure you have initialized helm on the cluster as described in the [helm section](../helm/README.md)
 ```sh
 #1.  Add the coreos helm repo to get the Prometheus Operator chart
 helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/
