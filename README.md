@@ -1,114 +1,205 @@
-# Kubernetes Bootcamp #
+# Security #
 
-[Kubernetes (K8S)](https://kubernetes.io/docs/home/) is the industry standard for deploying, managing, operating container based distributed applications.  It is proven in the most demanding production environments in the world.  Internet scale companies such as Google, Netflix, EBay and many more depend on Kubernetes to quickly deploy applications and bring product to market faster.
+Securing your Kubernetes cluster is a large topic.  Here we discuss Kubernetes native means to securing your cluster.  
 
-In this bootcamp, we will cover all the essential concepts in Kubernetes. We will go through Kubernetes from the persective of two user personas.
+The primary K8S capabilities for securing your workloads are:
 
-- The Application Engineer that engineers the software solutions deployed to K8S.
-- The Platform Engineer that provisions, configures and operates the platform (including cloud services, K8S, CI/CD, databases, message queues, caches, authentication providers, etc) that the Application engineers depends on to bring product to market.
+- [RBAC (Role-Based Access Control)](#markdown-header-rbac)
+- [Pod Security Policy](#markdown-header-pod-security-policy)
+- [Network Security Policy](#markdown-header-network-security-policy)
 
-We will also actually deploy a microservice based [application](./todo-app/README.md) to K8S.  Using this reference application, we will learn K8S concepts in a more meaningful way - as if you were using K8S to deploy and manage a real application.  We will cover scenarios such as:
+**Of course, there are many other considerations to securing your cluster depending on how it is deployed. For example, key management, patching your OS, process, and many more.  Here we only cover the main K8S considerations for securing your cluster**
 
-- Continuous Integration/Continuous Deployment
-- Blue/Green deployments
-- Deploying multiple versions of your application to perform A/B testing
-- Auto-scaling your application to deal with peak traffic demand
-- Developing/testing/deploying your application - from your laptop to K8S - with focus on developer productivity
-- RBAC (Role Based Access Control) to ensure Production environments are isolated from Dev/Test and QA.
-- Many more.
+## RBAC ##
 
-By the end of this 2-day bootcamp, you will learn the following K8S concepts:
+If you need to provide other users/roles restricted access to the K8S cluster, for example, you want "QA" roles having read/write access to only their environment, and "Dev" roles having read/write access to only their environment, then RBAC is the means to do so going forward.
 
-- [Pods - the unit of deployment on K8S](https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/)
-- [Services - how service discovery works in K8S](https://kubernetes.io/docs/concepts/services-networking/connect-applications-service/)
-- [Deployments - doing rolling updates, rollbacks, scaling out](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
-- [Storage - managing durable state with volumes, persistance volumes and persistent volume claims](https://kubernetes.io/docs/concepts/storage/volumes/)
-- [Secrets - externalizing secrets and passwords](https://kubernetes.io/docs/concepts/configuration/secret/)
-- [ConfigMaps - externalizing configuration from your applications](https://kubernetes.io/docs/tasks/configure-pod-container/configmap/)
-- [Statefulsets - how to deploy stateful applications](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/)
-- [Jobs](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/)
-- [Daemon Sets](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
-- [Ingress and Ingress Controllers - key to controlling how requests originating from outside the cluster is routed to your services](https://kubernetes.io/docs/concepts/services-networking/ingress/)
-- [RBAC - locking down your K8S environment](https://kubernetes.io/docs/admin/authorization/rbac/)
-- [Monitoring and log aggregation](./monitoring-logging/README.md)
-- [Helm - packaging and deploying your application to K8S](https://docs.helm.sh/)
+### Authentication and Authorization in K8S ###
 
-### Day 1 Outline: ###
+K8S supports a very flexible authentication/authorization model that is extensible through plugins and modules.  There are different authentication and authorization modules to support different requirements - from simple username/password to x509 certificates to Open ID Connect with an external Identity Provider, and more.
 
-- [Setting up your environment](./bootcamp/exercises/README.md)
-- [Kubernetes Architecture](./bootcamp/exercises/Architecture.md)
-    - Key components and what role they serve
-    - Key K8S resources and their purpose
-    - Quick overview of Kubernetes networking
-    - K8S as a dynamic platform and what that means
-- The [Todo list microservices application](./todo-app/README.md) overview
-    - Deploying the application to K8S
-    - Making a change and doing a rolling-update
-    - Scaling out the application to deal with increased traffic
-- [Pods](./pods/README.md) - the unit of deployment in K8S
-    - Defining the manifest
-    - What to consider when decomposing your application into pods
-    - Health checks and CPU, Memory requests and limits
-- [Services](./services/README.md) - How do pods find each other?
-    - Exposing your pods as services
-    - Using load-balancers and NodePorts to expose your pods to clients outside your cluster
-    - Accessing services external to your cluster. e.g. Azure CosmosDB service
-- [Deployments](./deployments/README.md) - Deployments enable you to perform rolling upgrades, rollback, and scale up/scale down your services.
-- [Storage](./storage/README.md) - Volumes, Persistent Volumes, Persistence Volume Claims, Storage Classes.
-- [ConfigMaps](./configmaps/README.md) - ConfigMaps enable you to define configuration that is accessible as environment variables, files in a volume or command line arguments.
-- [Ingress](./ingress/README.md) - Customizing the routing your published services.
-    - Deploying the nginx ingress controller
-    - Configuring routing to different version of your services
-- [Introduction to Helm](./helm/README.md) - Package manager for K8S deployments.
-    - What is it and why you need it
-    - Deploying the Todo list application using Helm
-    - Charts and templates
-    - Sharing your charts
+You can configure multiple authentication modules to support different authentication scenarios within your cluster.  Each of the enabled authentication modules will be invoked and short-circuited when the first module authenticates the request.  If all the modules cannot authenticate then access is denied.
 
-### Day 2 Outline: ###
+Here is an excellent diagram from the [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action) book from Manning that describes this concept.
 
-- [Daemonsets](./daemonsets/README.md) - Running pods that need to run on all or some nodes continuously e.g. for log aggregation.
-- [Jobs](./jobs/README.md) - Deploying jobs on K8S.
-- [Statefulsets](./statefulsets/README.md) - Using statefulsets to deploy services that require role differentiation across the cluster.  For example, mysql database with master and slaves.
-- [Advanced Scheduling](./scheduling/README.md) - Controlling how your pods are scheduled to the nodes.
-- [Securing your cluster](./security/README.md) - Controlling access to your K8S cluster.
-    - K8S authn/authr model
-    - RBAC
-        - Roles and Role bindings
-        - Creating custom roles and role bindings to only allow access to a specific namespace (e.g. qa or dev)
-    - Pod Security Policies
-- [Monitoring and Log Aggregation](./monitoring-logging/README.md)
-    - Deploying Azure Log Analytics and OMS
-    - Deploying EFK (Elasticsearch, Fluentd, Kibana) for log aggregation, Prometheus and Grafana for monitoring
-- [Cluster Administration](./cluster-admin/README.md) - Key cluster administration considerations.
-- [Extending K8S](./extending-k8s/README.md)
-    - We will create our own K8S resource type and implement a custom controller using the "Operator" pattern
-- [Blue/Green and A/B Testing](./ambassador/README.md) using [Ambassador](https://www.getambassador.io/) and [Envoy Proxy](https://www.envoyproxy.io/)
-    - We will deploy different versions of the todo-app to different namespaces then configure Envoy routing rules to route to the desired version
-- Brief overview of other K8S tools and projects you should know about:
-    - [Draft](./app-dev/README.md) - Tool to help developers be productive building/testing applications on K8S
-    - [Skaffold](./app-dev/README.md) - Similar to Draft but takes different approach.  Skaffold also supports multi-component apps which is very nice.
-    - [Minikube](https://github.com/kubernetes/minikube) - Local single node K8S cluster for development and learning.
-    - [Conduit](https://conduit.io/) - A lighweight microservices service mesh that can be deployed to K8S.  Provides intelligent load-balancing, telemetry and more!
+![access-control-overview](./authentication_authorization.png)
 
-### Interesting Links ###
+See [Controlling access to the K8S API](https://kubernetes.io/docs/admin/accessing-the-api/) to set up HTTP Basic Auth authentication, and see [Azure Active Directory plugin for client authentication with OIDC](https://github.com/kubernetes/client-go/tree/master/plugin/pkg/client/auth/azure) to set up authentication with your Azure AD tenant.
 
-* [Why Kubernetes](https://apprenda.com/why-kubernetes/)
-* [Large-scale cluster management at Google with Borg](https://research.google.com/pubs/pub43438.html)
-* [Borg, Omega and Kubernetes](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/44843.pdf)
-* [12 Factor Application Principles](https://12factor.net/)
-* [Kubernetes Case Studies](https://kubernetes.io/case-studies/)
-* [Gremlin](https://www.gremlin.com/) - Chaos Engineering for Kubernetes
-### Recommended Books ###
-* [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action)  - Fantastic book!  I use some diagrams and examples from this book.
-* [Kubernetes: Up And Running. Dive into the Future of Infrastructure](https://www.amazon.ca/Kubernetes-Running-Dive-Future-Infrastructure/dp/1491935677/ref=sr_1_1?ie=UTF8&qid=1521570189&sr=8-1&keywords=kubernetes+up+and+running) - Excellent book by Kelsey Hightower and two of the creators of K8S, Brendan Burns & Joe Beda
-* [Virtual Kubelet](https://github.com/virtual-kubelet/virtual-kubelet) - Virtual Kubelet is an open source project started by Microsoft.  Virtual kubelet will enable serverless container runtimes such as [Azure Container Instance](https://azure.microsoft.com/en-ca/services/container-instances/) or [Fargate](https://aws.amazon.com/fargate/) to be visible to a K8S cluster as a node.
+Below we will show setting up authentication and RBAC authorization using x509 certificates.
 
-### Very Helpful Utilities ###
+### Authenticating using x509 certs ###
 
-* [kube-ps1](https://github.com/jonmosco/kube-ps1) - displays your current K8S context and namespace in your shell prompt!
-* [kubens & kubectx](https://github.com/ahmetb/kubectx) - quickly set the working context/namespace!
+**MAKE SURE THE PROPER APIVERSION IS SET IN YOUR RESOURCES**
 
----
+The apiVersion for RBAC has changed since v1.7 as it was still Beta at that time. Make sure you have set the proper version in the following files.
 
-[Copyright (c) 2018, Architech - All rights reserved.](./COPYRIGHT.md)
+- production-role.yml
+- production-rolebinding.yml
+- qa-role.yml
+- qa-rolebinding.yml
+
+```yaml
+#for v1.8.0 and later
+apiVersion: rbac.authorization.k8s.io/v1
+
+#for v1.7.x
+apiVersion: rbac.authorization.k8s.io/v1beta1
+```
+
+Once the proper apiVersion has been set, see scripts to do this in the [certs](./certs) directory.
+
+```sh
+#1. Create credentials
+openssl genrsa -out user.key 2048
+openssl req -new -key user.key -out user.csr -subj "/CN=user/O=organization"
+#CLUSTER_CA_LOCATION for minikube would be $HOME/.minikube
+openssl x509 -req -in user.csr -CA CLUSTER_CA_LOCATION/ca.crt -CAkey CLUSTER_CA_LOCATION/ca.key -CAcreateserial -out user.crt -days 500
+
+#2.  Create a new cluster/user context for kubectl using the user.crt/key that was just created
+kubectl config set-credentials user --client-certificate=./user.crt  --client-key=./user.key
+kubectl config set-context user-context --cluster=cluster --user=user
+
+#3.  Set the current context to the user-context
+kubectl config use-context user-context
+
+#4.  Now try to do something
+kubectl get pods
+```
+
+### Finding out what you can do ###
+
+To find what you can do:
+
+```sh
+kubectl auth can-i verb resource
+
+#can i create pods?
+kubectl auth can-i create pods
+
+#can i create pods in the kube-system namespace
+kubectl auth can-i create pods --namespace kube-system
+
+#can i create pods in the kube-system namespace as the default systemaccount user?
+kubectl auth can-i get configmaps --namespace kube-system --as system:serviceaccount:kube-system:default
+```
+
+### Service Accounts ###
+
+Your Pods can also have identity.  This is necessary if your containers need to access the API server and you want to control what that container process can do via RBAC.  This identity is represented by the ServiceAccount resource.  ServiceAccounts are namespaced resources, hence the full name for a given service account is `system:serviceaccount:NAMESPACE:NAME`.  When the Pod executes, the containers in the Pod executes as the identity represented by the ServiceAccount.  You can bind RBAC permissions to this ServiceAccount - this is relevant when it comes to accessing the API Server; you can also leverage a Kubernetes service called [SubjectAccessReview API](https://kubernetes.io/docs/reference/access-authn-authz/authorization/) to verify whether a given process can access other Kubernetes components (e.g. the kubelet).
+
+By default, each Pod gets a default service account within the namespace it is deployed to.  You can also create you own ServiceAccounts to have more granular control.  When a ServiceAccount is created, regardless of whether it is a default account or custom, this triggers the creation of a secret.  This secret is a token (a JWT token) and it used when accessing the API server.
+
+See [service-account.yaml](./service-account.yaml) for an example of creating a ServiceAccount and using it from a Pod.
+
+## Pod Security Policies ##
+
+PodSecurityPolicy (PSP) resources enable the cluster admin to specify security contraints cluster wide for all pods.  In order for a Pod to be deployed onto the cluster, the pod template must meet the requirements specified in the PSP.  Note the policy is enforced at deployment time, not at runtime.  
+
+See [here](https://kubernetes.io/docs/concepts/policy/pod-security-policy/#what-is-a-pod-security-policy) for examples of what constraints can be specified. 
+
+Note that PSPs are cluster wide resources.  This means the policy applies to all PODs deployed to all namespaces by default.  Clearly such a wide scope would lead to situations that may be overly restrictive in certain cases.  For example, you may want to deploy system-level services that require hostPath or hostNetwork access.  To control which policies are enforced at deployment time, you can leverage RBAC and bind policies to ClusterRoles, then through ClusterRoleBindings, you can control which users can deploy pods with certain capabilities.  For example, you can define policies such that only the admin role can deploy pods that runs as a privileged user, and you can specify a more restrictive default policy that would be applied to all other users.  See [authorizing policies by RBAC](https://kubernetes.io/docs/concepts/policy/pod-security-policy/#via-rbac) for details.
+
+In order to leverage PSPs, it needs to be enabled on the cluster. The quickest way to determine if PSPs are enabled is to run the following command:
+
+```sh
+kubectl get psp
+
+#This means PSP is enabled
+No resources found.
+
+#This means PSP is not enabled
+the server doesn't have a resource type "psp"
+```
+If PSP is not enabled, you will need to enable the PodSecurityPolicy AdmissionController on your cluster.  This is done by passing an option to the kube-apiserver.  Unfortunately, this is not possible on AKS as you do not have access to the master nodes.  On ACS, the approach is to ssh into the master nodes, and update the kube-apiserver manifest and add the option.  The manifests are located in the `/etc/kubernetes/manifests` directory.  Once the manifest is updated, you need to restart the kubectl with `sudo systemctl restart kubelet`.  
+
+The other alternative is to use [acs-engine](https://github.com/Azure/acs-engine) to create a custom cluster with it enabled.  Note, you also need to enable AppArmor on all your nodes. 
+
+See [restrict-hostport.yaml](./restrict-hostport.yaml) and [restrict-root.yaml](./restrict-root.yaml) for examples.
+
+## Network Security Policies ## 
+
+By default, any pod can communicate with any other pod in the cluster.  However, what about if you wanted so control what pods can communicate with other pods?  What would be the equivalent to Azure [network security groups](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-nsg) in Kubernetes?  That would be [Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
+
+Network policies enable you to specify how a group of pods communicate with each other. For example, let's say you want to ensure pods can only communicate with other pods in the same namespace, you can achieve this with network policies.
+
+Here is an example of a Network Policy that prevents ingress access to the database pods from anything except pods with the label `access=true`.  Note, Network Policies are applied at the namespace level.
+
+```yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: db-access
+spec:
+  #This policy applies to those pods with label 'service=database'
+  podSelector:
+    matchLabels:
+      service: 'database'
+  #This is the ingress rule.  It will only allow ingress from those
+  #pods that have the label 'access=true'
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          access: 'true'
+```
+
+From above, you can see that NetworkPolicies are applied to pods within a given namespace (NetworkPolicy is a namespace level resource).  You then apply ingress and egress rules that defines traffic to and from the pods.  The ingress/egress rules can select the soure and destination using podSelectors, namespaceSelectors (e.g. all pods from a given namespace), and ipBlock (e.g. pods part of a given CIDR ip address range).  For details, run `kubectl explain networkpolicy.spec.ingress.from` or `kubectl explain networkpolicy.spec.egress.to`.
+
+See this this [blog post on k8s.io](http://blog.kubernetes.io/2017/10/enforcing-network-policies-in-kubernetes.html) for more info on Network Policies.  See also the excellent [Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) for some in-depth examples of policies.
+
+### Network Policies on AKS ###
+
+As AKS is a managed Kubernetes service you do not have means of configuring the master nodes beyond the capabilities exposed by az cli e.g. you do not have access to the master nodes directly.  Furthermore, today, AKS supports on the kubenet and Azure CNI network plugins and neither supports network policies.  Support for the Calico plugin is coming but in the meantime, you will need to use [kube-router](https://github.com/cloudnativelabs/kube-router).  Kube-router is an open source project that enables you to enforce network policty without a CNI that supports it.  It is deployed as a Daemonset (hence on every node) and leverages native Linux kernel features.  See this excellent blog for how to get kube-router deployed on AKS.  https://www.techdiction.com/2018/06/02/enforcing-network-policies-using-kube-router-on-aks/
+
+## pod.spec.securityContext ##
+
+The pod specification enables you to set security constraints at the pod level (applies to all containers) and at the container level.  
+
+```sh
+#with an active kubectl config run
+kubectl explain pods.spec.securityContext
+
+#Or run
+kubectl explain pods.spec.containers.securityContext
+```
+
+Reviewing your pod spec from the security perspective should be part of your code review!  Here is a tool you can use, https://kubesec.io/, to scan your specification, and it will make recommendations. Very helpful!
+
+## Verifying Your Security Configuration ##
+
+[Aquasec](www.aquasec.io) which provides a very comprehensive security monitoring platform for Kubernetes has opensourced their [kube-bench](https://github.com/aquasecurity/kube-bench) tool.  Kube-bench essentially audits your deployment from a security configuration perspective.  It follows the guidelines defined within the [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes/).  A related tool is [kube-hunter](https://github.com/aquasecurity/kube-hunter) that helps identifiy potential security holes within your cluster configuration. Think of it as pen-testing for kubernetes configuration.   These tools can be incorporated into your CI/CD pipeline during development.  For production, I do recommend a tool like Aquasec or Twislock as it provides many more capabilities.
+
+## Bleeding Edge ##
+
+There are multiple opensource projects currently gaining attention that takes different approaches to providing additional security boundaries around containers.  Both integrate with the CRI and hence is transparent to the Kubernetes layer. Definitely keep an eye on these projects.
+
+* https://katacontainers.io/
+* https://github.com/google/gvisor
+
+## Reference ##
+
+- [kubernetes-security.info, An amazing security resource for Kubernetes.](https://kubernetes-security.info/)
+- [Using RBAC Authorization](https://kubernetes.io/docs/admin/authorization/rbac/)
+- [OpenID Connect Auth Flow on Azure AD](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-protocols-openid-connect-code)
+- [Integrating AKS and Azure Active Directory](https://docs.microsoft.com/en-us/azure/aks/aad-integration)
+- [K8S Authentication with OpenID Connect tokens](https://kubernetes.io/docs/admin/authentication/#openid-connect-tokens)
+- [Excellent guide by Bitami](https://docs.bitnami.com/kubernetes/how-to/configure-rbac-in-your-kubernetes-cluster/)
+- [CNCF - Effective RBAC Youtube video](https://www.youtube.com/watch?v=Nw1ymxcLIDI)
+- [Autogenerating RBAC manifests from K8S audit logs](https://github.com/liggitt/audit2rbac)
+- [Excellent guide by Bitami on Pod Security Policies](https://docs.bitnami.com/kubernetes/how-to/secure-kubernetes-cluster-psp/)
+- [Encrypting Secrets at Rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)
+- [Network Security Policy](https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/)
+- [Building Container Images Securely on Kubernetes](https://blog.jessfraz.com/post/building-container-images-securely-on-kubernetes/)
+- [SSO for K8S](https://thenewstack.io/kubernetes-single-sign-one-less-identity/)
+- [OICD Helper for K8S](https://github.com/negz/kuberos)
+
+## Interesting Security Related Links ##
+
+- [Jesse Frazelle's blog on K8S multi-tenancy](https://blog.jessfraz.com/post/hard-multi-tenancy-in-kubernetes/)
+- [Katacontainers](https://katacontainers.io/) - nested virtualization to increase container isolation. 
+- [gVisor](https://github.com/google/gvisor) - userspace kernel abstraction to implement container sandbox. **Not all kernal interfaces are have implemented and therefore, some applications that may not work!!**
+- [6 Myths About Container Security](https://www.csoonline.com/article/3272830/containers/fact-vs-fiction-6-myths-about-container-security.html)
+- [bane - tool to help create custom AppArmor profiles](https://github.com/genuinetools/bane)
+- [Default Linux Capabilities](https://rhelblog.redhat.com/2016/10/17/secure-your-containers-with-this-one-weird-trick/)
+- [CIS Kubernetes Benchmark](https://www.cisecurity.org/benchmark/kubernetes/)
