@@ -167,6 +167,7 @@ There are multiple opensource projects currently gaining attention that takes di
 
 ## Reference ##
 
+- [kubernetes-security.info, An amazing security resource for Kubernetes.](https://kubernetes-security.info/)
 - [Using RBAC Authorization](https://kubernetes.io/docs/admin/authorization/rbac/)
 - [OpenID Connect Auth Flow on Azure AD](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-protocols-openid-connect-code)
 - [Integrating AKS and Azure Active Directory](https://docs.microsoft.com/en-us/azure/aks/aad-integration)
