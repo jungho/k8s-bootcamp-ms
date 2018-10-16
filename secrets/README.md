@@ -2,7 +2,7 @@
 
 Almost all applications have a need to access other services using sensitive data such as credentials or keys.  For non-senstive configuration data, you can just you configmaps but for things like credentials or keys you should use secrets.
 
-**Note, K8S secrets base64 encodes the data and therefore, it is still fully accessible by users with access to the cluster.  For zero-trust environments, you should delegate secret management to solutions such as [Hashicorp Vault](https://www.vaultproject.io/)**
+**Note, K8S secrets base64 encodes the data.  You can enable etcd to encrypt the data at rest (see reference section below).  Alternatively, you can delegate secret management to solutions such as [Hashicorp Vault](https://www.vaultproject.io/) or Azure Keyvault**
 
 ```sh
 #here we are creating a secret named 'example-secrets' from all the files in the directory 'secrets'
@@ -44,3 +44,4 @@ See [platform/azure-acr/README](../platform/azure-acr/README.md) for instruction
 ## References ##
 
 - [Secrets @ k8s.io](https://kubernetes.io/docs/concepts/configuration/secret/)
+- [Encrypting Secrets in etcd](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)
