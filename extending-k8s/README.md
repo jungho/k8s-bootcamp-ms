@@ -106,9 +106,13 @@ See the following diagram from the [Kubernetes in Action](https://www.manning.co
 
 ![Controller Pod](./images/controller-pod.png)
 
-## Operator Framework ##
+## Operator SDK && Kubebuilder ##
 
-Just announced at Kubecon is a new [open source framework](https://github.com/operator-framework) for creating Kubernetes Operators!  Operators currently require quite a bit of boiler plate code, however, the following projects provide an SDK and generators to boostrap your own Operators.  
+Operator SDK is part of CoreOS' [Operator Framework](https://github.com/operator-framework) and is the basis for many Operator implementations.  It differs from Kubebuilder in that in addition to Golang, you can create Operators using Ansible.   
+
+Kubebuilder is part of the Kubernetes [api-machinery SIG](https://groups.google.com/forum/#!forum/kubernetes-sig-api-machinery) and is fast on track for being the framework for building custom CRDs, Controllers and [Webhooks](https://github.com/kubernetes-sigs/kubebuilder/blob/master/docs/book/beyond_basics/what_is_a_webhook.md).
+
+For a deeper dive into creating CRDs and Customer controllers with these frameworks see my [k8s-crds](https://github.com/jungho/k8s-crds) repo. 
 
 ## API Aggregation - ADVANCED
 
